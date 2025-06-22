@@ -1,2 +1,8 @@
-/mvnw text eol=lf
+# 모든 텍스트 파일에 대해 LF 강제
+* text eol=lf
+
+# Windows 배치파일은 CRLF 유지
 *.cmd text eol=crlf
+
+# mvnw 파일은 LF 유지
+/mvnw text eol=lf
