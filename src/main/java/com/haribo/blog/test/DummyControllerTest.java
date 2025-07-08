@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.apache.logging.log4j.util.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,7 +35,24 @@ public class DummyControllerTest {
 	// save 함수는 id를 전달하면 해당 id에 대한 데이터가 없으면 insert를 해줌
 	// email, password
 	
-	@Transactional
+	@DeleteMapping("/dummy/user/{id}")
+	public String delete(@PathVariable int id) {
+		try {
+	        // 강제로 예외를 유도
+	        if (!userRepository.existsById(id)) {
+	            throw new EmptyResultDataAccessException("존재하지 않는 ID입니다.", 1);
+	        }
+	        userRepository.deleteById(id);
+	    } catch (EmptyResultDataAccessException e) {
+	        return "삭제 실패하였습니다. 해당 id는 DB에 없습니다.";
+	    } catch (Exception e) {
+	        return "삭제 중 알 수 없는 오류가 발생하였습니다.";
+	    }
+		
+		return "삭제되었습니다. id : "+id;
+	}
+	
+	@Transactional // 함수 종료시에 자동 commit 됨.
 	@PutMapping("/dummy/user/{id}")
 	public User updateUser(@PathVariable int id, @RequestBody User requestUser) { // json 데이터를 요청 => Java Object(MessageConverter의 Jackson라이브러리가 변환해서 받아줘요.)
 		System.out.println("id : "+id);
@@ -50,7 +69,7 @@ public class DummyControllerTest {
 		// userRepository.save(user); //@Transactional : save 함수 사용하지 않아도 update 가능하도록 하는 어노테이션
 		
 		// 더티 체킹
-		return null;
+		return user;
 	}
 	
 	// http://localhost:8000/blog/dummy/user
