@@ -49,7 +49,7 @@ public class SecurityConfig {
 							
 							.dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
 							
-							.requestMatchers("/","/auth/**","/js/**","/css/**","/image/**").permitAll()
+							.requestMatchers("/","/auth/**","/js/**","/css/**","/image/**","/dummy/**").permitAll()
 							.anyRequest().authenticated())
 					.formLogin((login) -> login
 							.loginPage("/auth/loginForm")
